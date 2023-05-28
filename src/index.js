@@ -1,5 +1,6 @@
 import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 const loading = document.querySelector('.load');
 loading.classList.add('is-hidden');
 let lightbox;
