@@ -1,4 +1,5 @@
 import Notiflix from 'notiflix';
+import axios from 'axios';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 const loading = document.querySelector('.load');
@@ -7,19 +8,17 @@ let lightbox;
 let page = 1;
 let q = '';
 const apiKey = '36752814-0630461e212967e8c9b2204d7';
-const apiStart = 'https://pixabay.com/api/';
 const searchForm = document.querySelector('.search-form');
 const bodyOdy = document.querySelector('.gallery');
+axios.defaults.baseURL = 'https://pixabay.com/api/';
 
 // fetch gallery
-
-const getUrl = async (userRequest, page) => {
-  const baseUrl = `${apiStart}?key=${apiKey}&q=${userRequest}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${page}`;
-  const response = await fetch(baseUrl);
-  const pictureArray = await response.json();
-  // const picArray = pictureArray.hits;
-  return pictureArray;
-};
+async function getUl(userRequest, page) {
+  const pictureArray = await axios.get(
+    `?key=${apiKey}&q=${userRequest}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${page}`
+  );
+  return pictureArray.data;
+}
 
 // load extra 40 pics
 
@@ -28,7 +27,7 @@ function loadMorePics() {
   lightbox.destroy();
   q = searchForm.searchQuery.value;
   console.log(page);
-  getUrl(q, page).then(pictureArray => {
+  getUl(q, page).then(pictureArray => {
     const Pictures = pictureArray.hits
       .map(
         gallery => `<a class= "gallery-link" href="${gallery.largeImageURL}"><div class="photo-card">
@@ -74,7 +73,7 @@ function galeryCreator(e) {
   page = 1;
   q = searchForm.searchQuery.value;
 
-  getUrl(q, page).then(pictureArray => {
+  getUl(q, page).then(pictureArray => {
     if (pictureArray.totalHits === 0) {
       Notiflix.Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
